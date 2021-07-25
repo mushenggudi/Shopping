@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.boss_train.Dao.CartCommodityDao">
+    <insert id="save" parameterType="com.example.boss_train.Entity.CartCommodity">
+        insert into cart_commodity(Cart_ID,Commodity_ID,Num) values(#{cart.cartID},#{commodity.commodityID},#{num})
+    </insert>
+    <delete id="deleteByCart" parameterType="com.example.boss_train.Entity.Cart">
+        delete from cart_commodity where Cart_ID = #{cartID}
+    </delete>
+    <delete id="deleteByCommodity" parameterType="com.example.boss_train.Entity.Commodity">
+        delete from cart_commodity where Commodity_ID = #{commodityID}
+    </delete>
+    <resultMap id="cartMap" type="com.example.boss_train.Entity.CartCommodity">
+        <id column="Cart_ID" property="cart.cartID"></id>
+        <id column="Commodity_ID" property="commodity.commodityID"></id>
+        <result column="Num" property="num"></result>
+        <association property="cart" javaType="com.example.boss_train.Entity.Cart">
+            <id column="Cart_ID" property="cartID"></id>
+            <result column="User_Id" property="user.account"></result>
+            <result column ="Total_Price" property="totalPrice"></result>
+        </association>
+        <association property="commodity" javaType="com.example.boss_train.Entity.Commodity">
+            <id column="Commodity_ID" property="commodityID"></id>
+            <result column="Commodity_Name" property="commodityName"></result>
+            <result column="Commodity_Price" property="commodityPrice"></result>
+        </association>
+    </resultMap>
+    <select id="queryByCart" parameterType="com.example.boss_train.Entity.Cart" resultMap="cartMap">
+        select * from cart_commodity
+        left join cart on cart_commodity.Cart_ID = cart.Cart_ID
+        left join commodity on cart_commodity.Commodity_ID = commodity.Commodity_ID
+        where cart_commodity.Cart_ID = #{cartID}
+    </select>
+    <update id="update" parameterType="com.example.boss_train.Entity.CartCommodity">
+        update cart_commodity
+        <trim prefix="set" suffixOverrides=",">
+            <if test="num!=null">Num = #{num},</if>
+        </trim>
+        where Cart_ID=#{cart.cartID} and Commodity_ID = #{commodity.commodityID}
+    </update>
+</mapper>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.boss_train.Dao.CommodityDao">
+    <insert id="save" parameterType="com.example.boss_train.Entity.Commodity">
+        insert into commodity(Commodity_ID,Commodity_Name,Commodity_Price) values(#{commodityID},#{commodityName},#{commodityPrice})
+    </insert>
+    <select id="queryAll" resultType="com.example.boss_train.Entity.Commodity" resultMap="commodityMap">
+        select * from commodity
+    </select>
+    <resultMap id="commodityMap" type="com.example.boss_train.Entity.Commodity">
+        <id column="Commodity_ID" property="commodityID"></id>
+        <result column="Commodity_Name" property="commodityName"></result>
+        <result column="Commodity_Price" property="commodityPrice"></result>
+    </resultMap>
+    <select id="queryById" parameterType="String" resultType="com.example.boss_train.Entity.Commodity" resultMap="commodityMap">
+        select * from commodity where Commodity_ID = #{commodityID}
+    </select>
+    <delete id="delete" parameterType="String">
+        delete from commodity where Commodity_ID = #{commodityID}
+    </delete>
+    <delete id="deletePatch" parameterType="java.util.List">
+        delete from commodity where Commodity_ID in
+        <foreach item = "ids" index="index" collection="list" open="(" separator="," close=")">
+            #{ids}
+        </foreach>
+    </delete>
+    <update id="update"  parameterType="com.example.boss_train.Entity.Commodity">
+        update commodity
+        <trim prefix="set" suffixOverrides=",">
+            <if test="commodityName!=null">Commodity_Name = #{commodityName},</if>
+            <if test="commodityPrice!=null">Commodity_Price = #{commodityPrice},</if>
+        </trim>
+        where Commodity_ID=#{commodityID}
+    </update>
+</mapper>

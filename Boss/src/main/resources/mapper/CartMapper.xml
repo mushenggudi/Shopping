@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.boss_train.Dao.CartDao">
+    <insert id="save" parameterType="com.example.boss_train.Entity.Cart">
+        insert into cart(Cart_ID,User_ID,Total_Price) values(#{cartID},#{user.account},#{totalPrice})
+    </insert>
+    <resultMap id="cartMap" type="com.example.boss_train.Entity.Cart">
+        <id column="Card_ID" property="cardID"></id>
+        <result column = "User_ID" property="user.account"></result>
+        <result column= "Total_Price" property="totalPrice"></result>
+        <association property="user" javaType="com.example.boss_train.Entity.User">
+            <id column="Account" property="account"></id>
+            <result column="Password" property="password"></result>
+        </association>
+    </resultMap>
+    <select id="queryById" parameterType="String" resultMap="cartMap">
+        select * from cart
+            left join user
+            on cart.User_ID = user.Account
+            where cart.Cart_ID = #{cartID}
+    </select>
+    <delete id="delete" parameterType="String">
+        delete from cart where Cart_ID = #{cartID}
+    </delete>
+    <update id="update" parameterType="com.example.boss_train.Entity.Cart">
+        update cart
+        <trim prefix="set" suffixOverrides=",">
+            <if test="user!=null">User_ID = #{user.account},</if>
+            <if test="totalPrice!=null">Total_Price = #{totalPrice},</if>
+        </trim>
+        where Cart_ID=#{cartID}
+    </update>
+</mapper>
